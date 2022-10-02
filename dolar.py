@@ -22,7 +22,7 @@ def precioDolar():
 
         print("taking value with selector")
         cotizacionDolar = float(el.get_text(strip=True))
-        
+
         print(cotizacionDolar)
         return (cotizacionDolar)
     except:
@@ -51,10 +51,10 @@ while True:
     dayNow = int(now.strftime("%d"))
     hourNow = int(now.strftime("%H"))
 
-    fechaCobro = 2
+    fechaCotizacion = 25
     horaCierreCotizacion = 0
 
-    if dayNow == fechaCobro and hourNow >= horaCierreCotizacion and cotizationDidntCheked:
+    if dayNow == fechaCotizacion and hourNow >= horaCierreCotizacion and cotizationDidntCheked:
 
         dollarPrice = precioDolar()
         if dollarPrice != 'An exception occurred':
@@ -68,5 +68,5 @@ while True:
         else:
             time.sleep(7200)
     # Si ya paso la fecha de cotizacion, reinicio el flag
-    elif dayNow > fechaCobro:
+    elif dayNow > fechaCotizacion:
         cotizationDidntCheked = True
