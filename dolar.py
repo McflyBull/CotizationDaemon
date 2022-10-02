@@ -3,6 +3,7 @@ import time
 import requests
 from bs4 import BeautifulSoup
 from datetime import datetime
+import pytz #For zonetime
 
 def precioDolar():
     try:
@@ -18,6 +19,10 @@ def precioDolar():
     except:
         return ("An exception occurred")
 
+def timeArgNow():
+    u = datetime.utcnow()
+    u = u.replace(tzinfo=pytz.utc) #NOTE: it works only with a fixed utc offset
+    retur (u.astimezone(pytz.timezone("America/Argentina/Buenos_Aires")))
 
 def debug(cont):
     if cont > 99999:
@@ -38,12 +43,12 @@ while True:
     # Debug
     cont = debug(cont)
 
-    now = datetime.now()
+    now = timeArgNow()
     dayNow = int(now.strftime("%d"))
     hourNow = int(now.strftime("%H"))
-    
-    fechaCobro = 1
-    horaCierreCotizacion = 15
+
+    fechaCobro = 2
+    horaCierreCotizacion = 0
 
     if dayNow == fechaCobro and hourNow >= horaCierreCotizacion and cotizationDidntCheked:
 
