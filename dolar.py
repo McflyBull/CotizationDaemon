@@ -22,7 +22,7 @@ def precioDolar():
 def timeArgNow():
     u = datetime.utcnow()
     u = u.replace(tzinfo=pytz.utc) #NOTE: it works only with a fixed utc offset
-    retur (u.astimezone(pytz.timezone("America/Argentina/Buenos_Aires")))
+    return (u.astimezone(pytz.timezone("America/Argentina/Buenos_Aires")))
 
 def debug(cont):
     if cont > 99999:
@@ -54,7 +54,9 @@ while True:
 
         dollarPrice = precioDolar()
         if dollarPrice != 'An exception occurred':
-            r = requests.post(url_api, data={'price': dollarPrice})
+            print(now)
+            r = requests.post(url_api, data={'price': dollarPrice,
+                                            'stamp': now})
             # check status code for response received. Success code - 200. Print content of request
             print(r, r.json())
             # Si ya consulto, evito que se repita
