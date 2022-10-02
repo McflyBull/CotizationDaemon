@@ -42,10 +42,11 @@ while True:
     dayNow = int(now.strftime("%d"))
     hourNow = int(now.strftime("%H"))
     #debug
+    print(now)
     print(dayNow)
     print(hourNow)
     #------
-    
+
     fechaCobro = 1
     horaCierreCotizacion = 15
 
