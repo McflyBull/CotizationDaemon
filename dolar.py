@@ -9,11 +9,15 @@ def precioDolar():
     try:
         print("Scrapping bna")
         vgm_url = 'https://www.bna.com.ar/Cotizador/MonedasHistorico'
+        print("1")
         html_text = requests.get(vgm_url).text
+        print("2")
         soup = BeautifulSoup(html_text, 'html.parser')
+        print("3")
         el = soup.select_one(
             '#cotizacionesCercanas > table.table.table-bordered.cotizador > tbody > tr > td.dest')
         # Dejo solo dos decimales, deberia hacerlo de otra manera
+        print("4")
         cotizacionDolar = float(el.get_text(strip=True))
         print(cotizacionDolar)
         return (cotizacionDolar)
