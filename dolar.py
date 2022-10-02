@@ -6,18 +6,23 @@ from datetime import datetime
 import pytz #For zonetime
 
 def precioDolar():
+    #the fix
+    headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'}
+
+    #response = requests.get(url, headers=headers)
+    
     try:
         print("Scrapping bna")
         vgm_url = 'https://www.bna.com.ar/Cotizador/MonedasHistorico'
-        print("1")
-        html_text = requests.get(vgm_url).text
-        print("2")
+        print("url for scrap created")
+        html_text = requests.get(vgm_url, headers=headers).text
+        print("creating html text")
         soup = BeautifulSoup(html_text, 'html.parser')
-        print("3")
+        print("converting with beatiful soup")
         el = soup.select_one(
             '#cotizacionesCercanas > table.table.table-bordered.cotizador > tbody > tr > td.dest')
         # Dejo solo dos decimales, deberia hacerlo de otra manera
-        print("4")
+        print("taking value with selector")
         cotizacionDolar = float(el.get_text(strip=True))
         print(cotizacionDolar)
         return (cotizacionDolar)
@@ -40,7 +45,7 @@ def debug(cont):
     time.sleep(1)
     return (cont)
 
-url_api = 'https://hostwebandapps.pythonanywhere.com/cotizacion/Dollar/'
+#url_api = 'https://hostwebandapps.pythonanywhere.com/cotizacion/Dollar/'
 #url_api = 'http://127.0.0.1:8000/cotizacion/Dollar/'
 cotizationDidntCheked = True
 
