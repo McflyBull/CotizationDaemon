@@ -7,6 +7,7 @@ import pytz #For zonetime
 
 def precioDolar():
     try:
+        print("Scrapping bna")
         vgm_url = 'https://www.bna.com.ar/Cotizador/MonedasHistorico'
         html_text = requests.get(vgm_url).text
         soup = BeautifulSoup(html_text, 'html.parser')
@@ -14,15 +15,18 @@ def precioDolar():
             '#cotizacionesCercanas > table.table.table-bordered.cotizador > tbody > tr > td.dest')
         # Dejo solo dos decimales, deberia hacerlo de otra manera
         cotizacionDolar = float(el.get_text(strip=True))
-        #print(cotizacionDolar)
+        print(cotizacionDolar)
         return (cotizacionDolar)
     except:
         return ("An exception occurred")
 
 def timeArgNow():
+    print("Looking for datetime arg")
     u = datetime.utcnow()
     u = u.replace(tzinfo=pytz.utc) #NOTE: it works only with a fixed utc offset
-    return (u.astimezone(pytz.timezone("America/Argentina/Buenos_Aires")))
+    now = u.astimezone(pytz.timezone("America/Argentina/Buenos_Aires"))
+    print(now)
+    return (now)
 
 def debug(cont):
     if cont > 99999:
