@@ -3,6 +3,7 @@ import requests
 from bs4 import BeautifulSoup
 from datetime import datetime
 from threading import Thread
+import pytz
 
 class WorkerThread(Thread):
     def __init__(self, value=0):
@@ -26,6 +27,11 @@ class ProgressThread(Thread):
             time.sleep(1)
 countWorker = WorkerThread()            # Alive Counter declaration
 progress = ProgressThread(countWorker)  # Alive Counter progress|
+
+def timeArgNow():
+    u = datetime.utcnow()
+    u = u.replace(tzinfo=pytz.utc) #NOTE: it works only with a fixed utc offset
+    return (u.astimezone(pytz.timezone("America/Argentina/Buenos_Aires")))
 
 
 def precioDolar():
@@ -64,7 +70,7 @@ def main(cotizationDidntChecked):
     countWorker.start()     # Alive Counter
     progress.start()        # Alive Counter
 
-    now = datetime.now()
+    now = timeArgNow()
     today = int(now.strftime("%d"))
     hourNow = int(now.strftime("%H"))
 
@@ -81,7 +87,7 @@ def main(cotizationDidntChecked):
 url_api = 'https://hostwebandapps.pythonanywhere.com/cotizacion/Dollar/'
 #url_api = 'http://127.0.0.1:8000/cotizacion/Dollar/'  # Local api
 cotizationDidntChecked = True
-fechaCotizacion = 5
+fechaCotizacion = 25
 horaCierreCotizacion = 16
 
 while True:
