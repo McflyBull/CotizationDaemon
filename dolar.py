@@ -3,12 +3,38 @@ import time
 import requests
 from bs4 import BeautifulSoup
 from datetime import datetime
+import time
+from threading import Thread
+
+class WorkerThread(Thread):
+    def __init__(self, value=0):
+        super(WorkerThread, self).__init__()
+        self.value = value
+    def run(self):
+        while self.value < 1000:
+            self.value += 1
+            time.sleep(1)
+
+class ProgressThread(Thread):
+    def __init__(self, worker):
+        super(ProgressThread, self).__init__()
+        self.worker = worker
+    def run(self):
+        while True:
+            if not self.worker.is_alive():
+                print('Worker is done')
+                return True
+            print('Worker is at', self.worker.value)
+            time.sleep(1)
+countWorker = WorkerThread()            # Alive Counter declaration
+progress = ProgressThread(countWorker)  # Alive Counter progress|
+
 
 def precioDolar():
     print("Scrapping bna")
     scrapping_url = 'https://www.bna.com.ar/Cotizador/MonedasHistorico'
-    headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'}
-
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'}
     try:
         print("converting the site to text")
         html_text = requests.get(scrapping_url, headers=headers).text
@@ -26,47 +52,40 @@ def precioDolar():
         print(cotizacionDolar)
         return (cotizacionDolar)
     except:
-        return ("An exception occurred")
+        return ("Web Blocked by firewall")
 
-def debug(cont):
-    if cont > 99999:
-        cont = 1
-    print("Running: "+str(cont))
-    cont += 1
-    time.sleep(1)
-    return (cont)
+def postApi(url_api, dollarPrice):
+    r = requests.post(url_api, data={'price': dollarPrice})
+    if (r.ok):
+        print(r.ok)     # Debug
+        print(r.json()) # Debug
+        return True
+    return False
 
-url_api = 'https://hostwebandapps.pythonanywhere.com/cotizacion/Dollar/'
-#url_api = 'http://127.0.0.1:8000/cotizacion/Dollar/'
-cotizationDidntCheked = True
-
-# Debug
-cont = 0
-
-while True:
-    # Debug
-    cont = debug(cont)
+def main(cotizationDidntChecked):
+    countWorker.start()     # Alive Counter
+    progress.start()        # Alive Counter
 
     now = datetime.now()
-    dayNow = int(now.strftime("%d"))
+    today = int(now.strftime("%d"))
     hourNow = int(now.strftime("%H"))
 
-    fechaCotizacion = 25
-    horaCierreCotizacion = 0
+    if today == fechaCotizacion and hourNow >= horaCierreCotizacion and cotizationDidntChecked:
+            dollarPrice = precioDolar()
+            if type(dollarPrice) == float:
+                cotizationDidntChecked = postApi(url_api, dollarPrice) #Prevent new request to server the same day
+            elif dollarPrice == "Web Blocked by firewall": time.sleep(7200) 
+    
+    if today > fechaCotizacion: cotizationDidntChecked = True #Reinicio flag si paso fecha de cotizacion
 
-    if dayNow == fechaCotizacion and hourNow >= horaCierreCotizacion and cotizationDidntCheked:
+    progress.join()# Alive Counter
 
-        dollarPrice = precioDolar()
-        if dollarPrice != 'An exception occurred':
-            print(now)
-            r = requests.post(url_api, data={'price': dollarPrice})
-            # check status code for response received. Success code - 200. Print content of request
-            print(r, r.json())
-            # Si ya consulto, evito que se repita
-            cotizationDidntCheked = False
-        # Bloqueo 2hs por bloqueo de proxy
-        else:
-            time.sleep(7200)
-    # Si ya paso la fecha de cotizacion, reinicio el flag
-    elif dayNow > fechaCotizacion:
-        cotizationDidntCheked = True
+url_api = 'https://hostwebandapps.pythonanywhere.com/cotizacion/Dollar/'
+#url_api = 'http://127.0.0.1:8000/cotizacion/Dollar/'  # Local api
+cotizationDidntChecked = True
+fechaCotizacion = 5
+horaCierreCotizacion = 16
+
+while True:
+    if __name__ == "__main__":
+        main(cotizationDidntChecked)
