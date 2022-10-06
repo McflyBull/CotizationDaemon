@@ -1,9 +1,7 @@
-import json
 import time
 import requests
 from bs4 import BeautifulSoup
 from datetime import datetime
-import time
 from threading import Thread
 
 class WorkerThread(Thread):
